@@ -1,11 +1,14 @@
+use crate::embeddings::calculate_embeddings;
 use serde::{Deserialize, Serialize};
 use std::fs;
 
+mod embeddings;
 mod storage;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Movie {
     name: String,
+    category: String,
     runtime: usize,
 }
 
@@ -23,20 +26,28 @@ fn main() {
                 id: idx,
                 name: movie.name.clone(),
                 runtime_minutes: movie.runtime,
-                vector: Vec::new(),
+                vector: calculate_embeddings(
+                    movie.name.as_str(),
+                    movie.category.as_str(),
+                    movie.runtime,
+                ),
             })
             .expect(format!("error adding {} to movies table", movie.name).as_str());
     }
 
     println!("Searching for similar movies...\n");
     let similar_movies = movies
-        .search(Vec::new(), 2)
+        .search(
+            calculate_embeddings("Lord of the Rings - Fellowship of the Ring", "fantasy", 178),
+            2,
+            "cosine",
+        )
         .expect("error searching for similar movies");
     for similar_movie in similar_movies {
-        println!("Recommendation: \n");
+        println!("Recommendation:");
         println!(
-            "Title: {}\nRuntime: {} (minutes)",
-            similar_movie.name, similar_movie.runtime_minutes
+            "Title: {}\nRuntime: {} (minutes) \n",
+            similar_movie.1.name, similar_movie.1.runtime_minutes
         );
     }
 }

@@ -1,3 +1,4 @@
+use crate::storage::similarity;
 use std::io::Error;
 
 pub(crate) struct Table {
@@ -26,7 +27,22 @@ impl Table {
         panic!("not implemented")
     }
 
-    pub fn search(&self, vec: Vec<usize>, limit: usize) -> Result<Vec<Record>, Error> {
-        panic!("not implemented")
+    pub fn search(
+        &self,
+        vec: Vec<usize>,
+        limit: usize,
+        similarity: &str,
+    ) -> Result<Vec<(f64, &Record)>, Error> {
+        let mut results = Vec::new();
+        for record in self.records.iter() {
+            if similarity == "cosine" {
+                let s = similarity::cosine_similarity(vec.clone(), record.vector.clone());
+                results.push((s, record));
+            }
+        }
+
+        results.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        results.truncate(limit);
+        Ok(results)
     }
 }

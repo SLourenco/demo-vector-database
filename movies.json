@@ -1,14 +1,27 @@
 [
   {
     "name": "Dune",
+    "category": "sci-fi",
     "runtime": 137
   },
   {
     "name": "DragonHeart",
+    "category": "fantasy",
     "runtime": 103
   },
   {
     "name": "Solaris",
+    "category": "sci-fi",
     "runtime": 166
+  },
+  {
+    "name": "Lord of the Rings - The Two Towers",
+    "category": "fantasy",
+    "runtime": 179
+  },
+  {
+    "name": "Lord of the Rings - The Return of the King",
+    "category": "fantasy",
+    "runtime": 201
   }
 ]

@@ -1,3 +1,4 @@
+mod similarity;
 pub mod table;
 
 use std::collections::BTreeMap;
