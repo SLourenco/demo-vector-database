@@ -1,3 +1,4 @@
+use crate::storage::similarity;
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, Error, Write};
@@ -69,18 +70,21 @@ impl Table {
         vec: Vec<usize>,
         limit: usize,
         similarity: &str,
-    ) -> Result<Vec<(f64, &Record)>, Error> {
-        Ok(Vec::new())
-        // let mut results = Vec::new();
-        // for record in self.records.iter() {
-        //     if similarity == "cosine" {
-        //         let s = similarity::cosine_similarity(vec.clone(), record.vector.clone());
-        //         results.push((s, record));
-        //     }
-        // }
-        //
-        // results.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
-        // results.truncate(limit);
-        // Ok(results)
+    ) -> Result<Vec<(f64, Record)>, Error> {
+        let file =
+            BufReader::new(File::open(self.name.clone()).expect("Unable to open table file"));
+
+        let mut results = Vec::new();
+        for line in file.lines() {
+            let record: Record = serde_json::from_str(line?.as_str())?;
+            if similarity == "cosine" {
+                let s = similarity::cosine_similarity(vec.clone(), record.vector.clone());
+                results.push((s, record));
+            }
+        }
+
+        results.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        results.truncate(limit);
+        Ok(results)
     }
 }
