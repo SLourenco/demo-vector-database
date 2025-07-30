@@ -1,3 +1,4 @@
+mod index;
 mod similarity;
 pub mod table;
 
@@ -25,6 +26,11 @@ pub(crate) fn init_storage() -> Result<Storage, Error> {
                 "File does not have a name",
             ));
         };
+
+        if filename.ends_with(".vdbx") {
+            // ignore indexed files
+            continue;
+        }
 
         let table = table::init_table(String::from(format!("database/{}", filename)))?;
         storage.tables.insert(String::from(filename), table);
