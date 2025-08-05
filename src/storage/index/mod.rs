@@ -7,7 +7,6 @@ use std::io::{BufRead, BufReader, Error, Write};
 pub(crate) trait Index {
     fn read_index_file(&self) -> Result<Vec<IndexEntry>, Error>;
     fn add_new_center(&self, data: Vec<usize>) -> Result<IndexEntry, Error>;
-
     fn number_of_clusters(&self) -> usize {
         2
     }
